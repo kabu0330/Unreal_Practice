@@ -14,4 +14,17 @@ class PRACTICE002_API APlayGameMode : public AGameMode
 {
 	GENERATED_BODY()
 	
+public:
+	APlayGameMode();
+
+	class UItemManager* GetItemManager()
+	{
+		return ItemManager;
+	}
+
+protected:
+
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UItemManager* ItemManager = nullptr;
 };

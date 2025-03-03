@@ -2,4 +2,9 @@
 
 
 #include "Play/PlayGameMode.h"
+#include <Play/Manager/ItemManager.h>
 
+APlayGameMode::APlayGameMode() : Super()
+{
+	ItemManager = CreateDefaultSubobject<UItemManager>(TEXT("ItemManager"));
+}

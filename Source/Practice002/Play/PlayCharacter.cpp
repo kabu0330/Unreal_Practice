@@ -5,8 +5,10 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "PlayCharacter.h"
 #include "InputAction.h"
+#include <Play/PlayGameMode.h>
+#include <Play/Manager/ItemManager.h>
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APlayCharacter::APlayCharacter()
@@ -21,11 +23,40 @@ APlayCharacter::APlayCharacter()
 
 }
 
+void APlayCharacter::CheckOverlap(AActor* Actor)
+{
+	if (true == Actor->ActorHasTag(TEXT("Item")))
+	{
+		//UGameplayStatics::GetAllActorsWithTag()
+		Actor->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("WeaponSocket"));
+	}
+}
+
 // Called when the game starts or when spawned
 void APlayCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	AGameModeBase* GameMode = Cast<AGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+	APlayGameMode* PlayGameMode = nullptr;
+	if (nullptr != GameMode)
+	{
+		PlayGameMode = Cast<APlayGameMode>(GameMode);
+		if (nullptr == PlayGameMode)
+		{
+			return;
+		}
+	}
+
+	UItemManager* ItemManager = PlayGameMode->GetItemManager();
+	if (nullptr != ItemManager)
+	{
+		AActor* NewDropItem = ItemManager->CreateItem(TEXT("Staff"));
+		if (nullptr != NewDropItem)
+		{
+			NewDropItem->SetActorLocation(FVector(300.0f, 300.0f, 50.0f));
+		}
+	}
 }
 
 // Called every frame

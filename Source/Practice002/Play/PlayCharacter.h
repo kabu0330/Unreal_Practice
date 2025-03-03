@@ -35,6 +35,9 @@ public:
 		CurAnimation = EPlayerState::IDLE;
 	}
 
+	UFUNCTION(BlueprintCallable)
+	void CheckOverlap(AActor* Actor);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
