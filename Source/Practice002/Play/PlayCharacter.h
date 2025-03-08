@@ -17,6 +17,7 @@ enum class EPlayerState : uint8
 };
 
 
+
 UCLASS()
 class PRACTICE002_API APlayCharacter : public ACharacter
 {
@@ -26,13 +27,20 @@ public:
 	// Sets default values for this character's properties
 	APlayCharacter();
 
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
+	UFUNCTION(BlueprintCallable, Reliable, Server)
+	void ChangeAnimation(EPlayerState CurPlayerAnimation);
+	void ChangeAnimation_Implementation(EPlayerState CurPlayerAnimation);
+
 	UFUNCTION(BlueprintCallable)
 	void MoveFunction(const FVector2D& _Value);
 
 	UFUNCTION(BlueprintCallable)
 	void StopMoving()
 	{
-		CurAnimation = EPlayerState::IDLE;
+		//CurAnimation = EPlayerState::IDLE;
+		ChangeAnimation(EPlayerState::IDLE);
 	}
 
 	UFUNCTION(BlueprintCallable)
@@ -49,7 +57,7 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	EPlayerState CurAnimation = EPlayerState::IDLE;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))

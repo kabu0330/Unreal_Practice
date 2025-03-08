@@ -9,6 +9,7 @@
 #include <Play/PlayGameMode.h>
 #include <Play/Manager/ItemManager.h>
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 APlayCharacter::APlayCharacter()
@@ -20,6 +21,7 @@ APlayCharacter::APlayCharacter()
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
+	bReplicates = true;
 
 }
 
@@ -30,6 +32,22 @@ void APlayCharacter::CheckOverlap(AActor* Actor)
 		//UGameplayStatics::GetAllActorsWithTag()
 		Actor->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("WeaponSocket"));
 	}
+}
+
+void APlayCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APlayCharacter, CurAnimation);
+}
+
+//void APlayCharacter::ChangeAnimation(EPlayerAnimation CurPlayerAnimation)
+//{
+//}
+
+void APlayCharacter::ChangeAnimation_Implementation(EPlayerState CurPlayerAnimation)
+{
+	CurAnimation = CurPlayerAnimation;
 }
 
 // Called when the game starts or when spawned
@@ -48,15 +66,19 @@ void APlayCharacter::BeginPlay()
 		}
 	}
 
-	UItemManager* ItemManager = PlayGameMode->GetItemManager();
-	if (nullptr != ItemManager)
+	if (nullptr != PlayGameMode)
 	{
-		AActor* NewDropItem = ItemManager->CreateItem(TEXT("Staff"));
-		if (nullptr != NewDropItem)
+		UItemManager* ItemManager = PlayGameMode->GetItemManager();
+		if (nullptr != ItemManager)
 		{
-			NewDropItem->SetActorLocation(FVector(300.0f, 300.0f, 50.0f));
+			AActor* NewDropItem = ItemManager->CreateItem(TEXT("Staff"));
+			if (nullptr != NewDropItem)
+			{
+				NewDropItem->SetActorLocation(FVector(300.0f, 300.0f, 50.0f));
+			}
 		}
 	}
+
 }
 
 // Called every frame
@@ -87,7 +109,8 @@ void APlayCharacter::MoveFunction(const FVector2D& _Value)
 	AddMovementInput(Forward, _Value.X); // 앞뒤 이동
 	AddMovementInput(Right, _Value.Y); // 좌우 이동
 
-	CurAnimation = EPlayerState::RUN;
+	//CurAnimation = EPlayerState::RUN;
+	ChangeAnimation(EPlayerState::RUN);
 }
 
 // Called to bind functionality to input
