@@ -55,30 +55,6 @@ void APlayCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AGameModeBase* GameMode = Cast<AGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
-	APlayGameMode* PlayGameMode = nullptr;
-	if (nullptr != GameMode)
-	{
-		PlayGameMode = Cast<APlayGameMode>(GameMode);
-		if (nullptr == PlayGameMode)
-		{
-			return;
-		}
-	}
-
-	if (nullptr != PlayGameMode)
-	{
-		UItemManager* ItemManager = PlayGameMode->GetItemManager();
-		if (nullptr != ItemManager)
-		{
-			AActor* NewDropItem = ItemManager->CreateItem(TEXT("Staff"));
-			if (nullptr != NewDropItem)
-			{
-				NewDropItem->SetActorLocation(FVector(300.0f, 300.0f, 50.0f));
-			}
-		}
-	}
-
 }
 
 // Called every frame

@@ -28,6 +28,12 @@ public:
 		return ItemData;
 	}
 
+	// Network
+	void SetItemDataKey(const FString& DataKey)
+	{
+		ItemDataKey = DataKey;
+	}
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -35,7 +41,15 @@ protected:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	// Network
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
 private:	
+	// Network
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Network", meta = (AllowPrivateAccess = "true"))
+	FString ItemDataKey = "";
+
+
 	const FItemDataRow* ItemData = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
